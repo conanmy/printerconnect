@@ -1,9 +1,9 @@
 let express = require('express');
+let escpos = require('escpos');
 let app = express();
 
 // respond with "hello world" when a GET request is made to the homepage
 app.all('/print', function (req, res) {
-  const escpos = require('escpos');
 
   // Select the adapter based on your printer type
   const device  = new escpos.USB();
