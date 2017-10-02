@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "connect to usb printer via localhost",
   "main": "index.js",
+  "bin": "index.js",
   "dependencies": {
     "escpos": "^2.4.4",
     "express": "^4.16.1"
