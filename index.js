@@ -4,6 +4,10 @@ let cors = require('cors');
 let bodyParser = require('body-parser');
 let app = express();
 
+process.on('uncaughtException', function (err) {
+  console.log('Caught exception: ' + err);
+});
+
 app.use(cors());
 // parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -18,24 +22,24 @@ app.options('/print', function(req, res) {
 // respond with "hello world" when a GET request is made to the homepage
 app.post('/print', function (req, res) {
   let commands = req.body.commands;
-  console.log(commands);
   try {
     // Select the adapter based on your printer type
     const device  = new escpos.USB();
+    // const device = new escpos.Serial('XPSPort:');
     // const device  = new escpos.Network('localhost');
-    // const device  = new escpos.Serial('/dev/usb/lp0');
 
     const printer = new escpos.Printer(device);
 
     device.open(function() {
       commands.map(function(command) {
         console.log(command);
-        printer = printer[command[0]].apply(this, command.slice(1));
+        printer[command[0]].apply(printer, command.slice(1));
       });
       console.log('done');
       res.status(200).send('Success');
     });
   } catch(err) {
+    console.log(err);
     res.status(500).send(err.toString());
   }
 });
