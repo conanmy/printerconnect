@@ -19,7 +19,6 @@ app.options('/print', function(req, res) {
 app.post('/print', function (req, res) {
   let commands = req.body.commands;
   console.log(commands);
-  console.log(req.body);
   try {
     // Select the adapter based on your printer type
     const device  = new escpos.USB();
