@@ -6,7 +6,8 @@
   "bin": "index.js",
   "dependencies": {
     "escpos": "^2.4.4",
-    "express": "^4.16.1"
+    "express": "^4.16.1",
+    "usb": "^1.2.0"
   },
   "devDependencies": {},
   "scripts": {
@@ -14,5 +15,13 @@
     "start": "node index.js"
   },
   "author": "semstar2010@gmail.com",
-  "license": "ISC"
+  "license": "ISC",
+  "pkg": {
+    "assets": [
+      "node_modules/**/*"
+    ],
+    "targets": [
+      "node6-win-x64"
+    ]
+  }
 }
