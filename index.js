@@ -1,8 +1,8 @@
-let express = require('express');
-let escpos = require('escpos');
-let cors = require('cors');
-let bodyParser = require('body-parser');
-let app = express();
+var express = require('express');
+var escpos = require('escpos');
+var cors = require('cors');
+var bodyParser = require('body-parser');
+var app = express();
 
 process.on('uncaughtException', function (err) {
   console.log('Caught exception: ' + err);
@@ -21,14 +21,14 @@ app.options('/print', function(req, res) {
 
 // respond with "hello world" when a GET request is made to the homepage
 app.post('/print', function (req, res) {
-  let commands = req.body.commands;
+  var commands = req.body.commands;
   try {
     // Select the adapter based on your printer type
-    const device  = new escpos.USB();
+    var device  = new escpos.USB();
     // const device = new escpos.Serial('XPSPort:');
     // const device  = new escpos.Network('localhost');
 
-    const printer = new escpos.Printer(device);
+    var printer = new escpos.Printer(device);
 
     device.open(function() {
       commands.map(function(command) {

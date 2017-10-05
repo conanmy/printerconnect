@@ -8,7 +8,8 @@
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
     "escpos": "^2.4.4",
-    "express": "^4.16.1"
+    "express": "^4.16.1",
+    "serialport": "^4.0.0"
   },
   "devDependencies": {},
   "scripts": {
@@ -19,7 +20,7 @@
   "license": "ISC",
   "pkg": {
     "targets": [
-      "node6-win-x64"
+      "node4-win-x86"
     ]
   }
 }
