@@ -1,4 +1,4 @@
-const net = require('net');
+var net = require('net');
 
 function convertStringToArrayBuffer(str) {
   var buf = new ArrayBuffer(str.length);
@@ -19,15 +19,15 @@ function calculateLRC(str) {
 }
 
 function makePurchaseCommandNumber(num) {
-  const coverZeros = '00000000';
-  let numStr = Number(num).toFixed(2);
+  var coverZeros = '00000000';
+  var numStr = Number(num).toFixed(2);
   return coverZeros.slice(0, 9 - numStr.length) + numStr;
 }
 
 module.exports = {
   makePurchaseCommand(amount, cashAmount) {
-    let amountStr = makePurchaseCommandNumber(amount);
-    let cashAmountStr = cashAmount ? makePurchaseCommandNumber(cashAmount) : '000000.00';
+    var amountStr = makePurchaseCommandNumber(amount);
+    var cashAmountStr = cashAmount ? makePurchaseCommandNumber(cashAmount) : '000000.00';
     return 'PUR,1,' + amountStr + ',' + cashAmountStr + ',\3';
   },
   makeCommandLine(command) {
