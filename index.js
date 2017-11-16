@@ -49,6 +49,7 @@ app.post('/print', function (req, res) {
 io.on('connection', function(socket){
   console.log('a user connected');
   socket.on('Purchase', function (payload) {
+    console.log('Purchase message received.')
     var host = payload.host;
     var port = payload.port;
     var purchaseAmount = payload.purchaseAmount;
@@ -58,7 +59,7 @@ io.on('connection', function(socket){
       if (processing === true && client) {
         console.log(message);
         socket.emit('purchaseFailed', {
-          error: message
+          message: message
         });
         processing = false;
         client.destroy();
@@ -71,10 +72,11 @@ io.on('connection', function(socket){
             posLink.makePurchaseCommand(purchaseAmount, cashOut)
           )
         );
+        console.log('Message send to eftpos.')
         processing = true;
         setTimeout(function() {
-          emitFailMessage('Transaction timeout');
-        }, 120000);
+          emitFailMessage('Eftpos connector transaction timeout: 180000');
+        }, 180000);
       });
       client.on('data', function(data) {
         console.log('Received: ' + data);
@@ -99,7 +101,7 @@ io.on('connection', function(socket){
       });
     } else {
       socket.emit('purchaseFailed', {
-        error: 'No host, port, or purchaseAmount in purchase request payload.'
+        message: 'No host, port, or purchaseAmount in purchase request payload.'
       });
     }
   });
