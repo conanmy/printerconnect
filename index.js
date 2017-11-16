@@ -74,9 +74,6 @@ io.on('connection', function(socket){
         );
         console.log('Message send to eftpos.')
         processing = true;
-        setTimeout(function() {
-          emitFailMessage('Eftpos connector transaction timeout: 180000');
-        }, 180000);
       });
       client.on('data', function(data) {
         console.log('Received: ' + data);
@@ -94,11 +91,14 @@ io.on('connection', function(socket){
           client.write('\6');
           client.write(posLink.makeSignCommand());
         }
-        client.destroy();
       });
       client.on('error', function (err) {
         emitFailMessage(err.toString());
       });
+      setTimeout(function() {
+        console.log('time out');
+        emitFailMessage('Eftpos connector transaction timeout: 180000');
+      }, 180000);
     } else {
       socket.emit('purchaseFailed', {
         message: 'No host, port, or purchaseAmount in purchase request payload.'
