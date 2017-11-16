@@ -53,6 +53,17 @@ io.on('connection', function(socket){
     var port = payload.port;
     var purchaseAmount = payload.purchaseAmount;
     var cashOut = payload.cashOut;
+    var processing = false;
+    function emitFailMessage(message) {
+      if (processing === true && client) {
+        console.log(message);
+        socket.emit('purchaseFailed', {
+          error: message
+        });
+        processing = false;
+        client.destroy();
+      }
+    }
     if (host && port && purchaseAmount) {
       var client = posLink.createPosConnection(host, port, function() {
         client.write(
@@ -60,20 +71,31 @@ io.on('connection', function(socket){
             posLink.makePurchaseCommand(purchaseAmount, cashOut)
           )
         );
+        processing = true;
+        setTimeout(function() {
+          emitFailMessage('Transaction timeout');
+        }, 120000);
       });
       client.on('data', function(data) {
         console.log('Received: ' + data);
-        socket.emit('purchaseSuccess', {
-          uid: 'xxx'
-        });
+        if (data.indexOf("WAIT") > 0 || data.indexOf("REFUND")> 0 || data.indexOf("REMOVE") > 0)
+        {
+          client.write('\6');
+        } else if (data.indexOf("DECLINED") > 0 || data.indexOf("CANCELLED")> 0
+          || data.indexOf("INVALID")> 0 || data.indexOf("INCORRECT")> 0 || data.indexOf("PIN TRIES EXCEEDED") > 0) {
+          client.write('\6');
+          emitFailMessage('Transaction error');
+        } else if (data.indexOf("ACCEPTED") > 0) {
+           client.write('\6');
+           socket.emit('purchaseSuccess');
+        } else if (data.indexOf("SIGNATURE OK") > 0) {
+          client.write('\6');
+          client.write(posLink.makeSignCommand());
+        }
         client.destroy();
       });
       client.on('error', function (err) {
-        console.log(err);
-        socket.emit('purchaseFailed', {
-          error: err
-        });
-        client.destroy();
+        emitFailMessage(err.toString());
       });
     } else {
       socket.emit('purchaseFailed', {
