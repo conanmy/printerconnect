@@ -22,24 +22,30 @@ function calculateLRC(str) {
   return String.fromCharCode(lrc);
 }
 
+function makeFixString(str, length) {
+  str = str + '';
+  str = str.slice(0, length);
+  var coverZeros = '0000000000';
+  let extraSpaceLength = length - str.length;
+  return coverZeros.slice(0, extraSpaceLength) + str;
+}
+
 function makePurchaseCommandNumber(num) {
   var coverZeros = '00000000';
   var numStr = Number(num).toFixed(2);
-  return coverZeros.slice(0, 9 - numStr.length) + numStr;
+  return makeFixString(numStr, 9);
 }
 
 function makeTransactionNumber() {
-  var coverZeros = '000000';
-  accumulateTransNo = accumulateTransNo + 1;
-  var numStr = accumulateTransNo + '';
-  return coverZeros.slice(0, 6 - numStr.length) + numStr;
+  var now = new Date();
+  return '' + now.getFullYear() + makeFixString(now.getMonth() + 1, 2) + makeFixString(now.getDate(), 2) + makeFixString(now.getHours(), 2) + makeFixString(now.getMinutes(), 2);
 }
 
 module.exports = {
   makePurchaseCommand(amount, cashAmount) {
     var amountStr = makePurchaseCommandNumber(amount);
     var cashAmountStr = cashAmount ? makePurchaseCommandNumber(cashAmount) : '000000.00';
-    return makeTransactionNumber + ',PUR,1,' + amountStr + ',' + cashAmountStr + ',POS 1,YYYNYY,,\3';
+    return makeTransactionNumber() + ',PUR,1,' + amountStr + ',' + cashAmountStr + ',POS 1,YYYNYY,,\3';
   },
   makeCommandLine(command) {
     return '\2' + command + calculateLRC(command);
